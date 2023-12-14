@@ -24,10 +24,24 @@ export class DetailPokemonComponent implements OnInit {
     //Si il existe on attribue à la propriété Pokemon, l'id qui correspond à cet identifiant.
     if (pokemonId) {
       //C'est une string mais on veut un nombre donc on met un +
-      this.pokemon = this.pokemonService.getPokemonById(+pokemonId);
+      this.pokemonService
+        .getPokemonById(+pokemonId)
+        .subscribe((pokemon) => (this.pokemon = pokemon));
     }
   }
+
+  deletePokemon(pokemon: Pokemon) {
+    this.pokemonService.deletePokemonById(pokemon.id).subscribe(() =>
+      //On redirige l'utilisateur vers la liste des pokémons, une fois que le pokemon est supprimé
+      this.goToPokemonList()
+    );
+  }
+
   goToPokemonList() {
     this.router.navigate(["/pokemons"]);
+  }
+
+  goToEditPokemon(pokemon: Pokemon) {
+    this.router.navigate(["/edit/pokemon", pokemon.id]);
   }
 }

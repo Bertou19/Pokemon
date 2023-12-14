@@ -13,7 +13,12 @@ export class ListPokemonComponent {
   constructor(private router: Router, private pokemonService: PokemonService) {}
 
   ngOnInit() {
-    this.pokemonList = this.pokemonService.getPokemonList();
+    //On recupère un observable depuis mon service
+    this.pokemonService
+      .getPokemonList()
+      //subscribe va permettre de s'abonner au service,
+      //on recupère la pokemonList et on la pousse dans la propriété du composant
+      .subscribe((pokemonList) => (this.pokemonList = pokemonList));
   }
 
   //Lorsque l'utilisateur clique sur un pokémon, il est passé en paramètre

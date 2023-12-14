@@ -1,0 +1,8 @@
+/* elements de type required */
+.ng-valid[required] {
+  border-left: 5px solid #42a948;
+}
+/* bordure rouge pour les elements invalides qui ne sont pas de type form */
+.ng-invalid:not(form) {
+  border-left: 5px solid #a94442;
+}
