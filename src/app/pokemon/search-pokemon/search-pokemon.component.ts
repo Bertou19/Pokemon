@@ -1,7 +1,14 @@
 import { Component, OnInit } from "@angular/core";
 import { Pokemon } from "../pokemon";
 import { Router } from "@angular/router";
-import { Observable, Subject } from "rxjs";
+import {
+  Observable,
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  switchMap,
+} from "rxjs";
+import { PokemonService } from "../pokemon.service";
 
 @Component({
   selector: "app-search-pokemon",
@@ -12,10 +19,23 @@ export class SearchPokemonComponent implements OnInit {
   //ça permet de construire un flux de données et pas seulement de le consommer comme avec l'observable
   searchTerms = new Subject<string>();
   pokemons$ = Observable<Pokemon[]>;
+  pokemons: any;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private pokemonService: PokemonService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // this.pokemons.subscribe((pokemons: any) => (this.pokemons = pokemons));
+    //Va permettre de supprimer les termes de recherches qui sont trop succins,
+    //eliminer des requetes dont on a pas besoin.
+    this.pokemons = this.searchTerms.pipe(
+      debounceTime(300),
+      //On obtient un nouveau flux sans reches identiques(quand l'utilisateur tape deux fois la meme recherche)
+      distinctUntilChanged(),
+      //Permet de recupérer le tableau de pokemon qui correspond au terme entré par l'utilisateur (dernière requete envoyée au serveur
+      //On a annulé les précédentes requêtes avec switchMap)
+      switchMap((term) => this.pokemonService.searchPokemonList(term))
+    );
+  }
 
   search(term: string) {
     //A chaque fois que l'utilisateur recherche un terme on va venir pousser le term et obtenir le flux de données en sortie

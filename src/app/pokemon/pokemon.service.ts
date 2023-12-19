@@ -30,6 +30,12 @@ export class PokemonService {
   }
 
   searchPokemonList(term: string): Observable<Pokemon[]> {
+    //Si l'utilisateur tape moins de 2 caractères ça n'appelle pas le serveur
+    if (term.length <= 1) {
+      //Si il y moins de deux caractères, cela retourne un tableau de flux vide
+      return of([]);
+    }
+
     //Il retourne un terme de recherche de l'utilisateur
     return this.http.get<Pokemon[]>(`api/pokemons/?name=${term}`).pipe(
       tap((response) => this.log(response)),

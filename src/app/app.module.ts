@@ -10,8 +10,9 @@ import { HttpClientModule } from "@angular/common/http";
 import { HttpClientInMemoryWebApiModule } from "angular-in-memory-web-api";
 //importation du service que l'on a crée pour l'api
 import { InMemoryDataService } from "./in-memory-data.service";
+import { LoginComponent } from "./login/login.component";
 @NgModule({
-  declarations: [AppComponent, PageNotFoundComponent],
+  declarations: [AppComponent, PageNotFoundComponent, LoginComponent],
   imports: [
     BrowserModule,
     FormsModule,
