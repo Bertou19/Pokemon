@@ -2,6 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { PokemonService } from "../pokemon.service";
 import { ActivatedRoute } from "@angular/router";
 import { Pokemon } from "../pokemon";
+import { PokemonFormComponent } from "../pokemon-form/pokemon-form.component";
+import { NgIf } from "@angular/common";
+import { Title } from "@angular/platform-browser";
 
 @Component({
   selector: "app-edit-pokemon",
@@ -14,13 +17,16 @@ import { Pokemon } from "../pokemon";
     <app-pokemon-form *ngIf="pokemon" [pokemon]="pokemon"></app-pokemon-form>
   `,
   styles: ``,
+  standalone: true,
+  imports: [NgIf, PokemonFormComponent],
 })
 export class EditPokemonComponent implements OnInit {
   pokemon: Pokemon | undefined;
 
   constructor(
     private route: ActivatedRoute,
-    private PokemonService: PokemonService
+    private PokemonService: PokemonService,
+    private title: Title
   ) {}
 
   ngOnInit() {
@@ -28,12 +34,20 @@ export class EditPokemonComponent implements OnInit {
     const pokemonId: string | null = this.route.snapshot.paramMap.get("id");
     if (pokemonId) {
       //Je vais chercher le pokemon associé grâce au PokemonService
-      this.PokemonService.getPokemonById(+pokemonId).subscribe(
-        (pokemon) => (this.pokemon = pokemon)
-      );
+      this.PokemonService.getPokemonById(+pokemonId).subscribe((pokemon) => {
+        this.pokemon = pokemon;
+        this.initTitle(pokemon);
+      });
     } else {
       //Si il n'y en a pas on met undefined
       this.pokemon = undefined;
     }
+  }
+  initTitle(pokemon: Pokemon | undefined) {
+    if (!pokemon) {
+      this.title.setTitle("Pokemon not found");
+      return;
+    }
+    this.title.setTitle(pokemon.name);
   }
 }
